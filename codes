@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GDPR & CCPA Fine Risk Calculator | Compliance Estimator</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --danger: #dc2626;
+            --warning: #d97706;
+            --success: #16a34a;
+            --bg: #f3f4f6;
+            --card: #ffffff;
+            --text: #1f2937;
+            --text-light: #6b7280;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--text);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        .calculator-card {
+            background: var(--card);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+
+        select, input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .checkbox-group input {
+            margin-top: 4px;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            font-weight: 400;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        button.calculate-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s;
+        }
+
+        button.calculate-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        #result {
+            display: none;
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 8px;
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+        }
+
+        .result-high {
+            background: #fee2e2 !important;
+            border: 1px solid #ef4444 !important;
+        }
+
+        .result-medium {
+            background: #fef3c7 !important;
+            border: 1px solid #f59e0b !important;
+        }
+
+        .result-low {
+            background: #d1fae5 !important;
+            border: 1px solid #10b981 !important;
+        }
+
+        .result-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .result-details {
+            background: rgba(255, 255, 255, 0.5);
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .cta-box {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .cta-box h3 {
+            margin-bottom: 10px;
+        }
+
+        .cta-box p {
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        .cta-btn {
+            background: white;
+            color: var(--primary);
+            border: none;
+            padding: 12px 25px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .ad-placeholder {
+            background: #e5e7eb;
+            border: 2px dashed #9ca3af;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+            margin: 20px 0;
+            font-weight: 600;
+        }
+
+        .disclaimer {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Compliance Fine Risk Calculator</h1>
+            <p class="subtitle">Estimate potential penalties for GDPR, CCPA, and other data privacy violations</p>
+        </header>
+
+        <!-- Ad Placeholder 1 (Top of page - High visibility) -->
+        <div class="ad-placeholder">
+            [Ad Space: Legal Services / Cybersecurity Insurance - High RPM Zone]
+        </div>
+
+        <div class="calculator-card">
+            <form id="fineCalculator">
+                <div class="form-group">
+                    <label for="jurisdiction">Applicable Jurisdiction</label>
+                    <select id="jurisdiction" required>
+                        <option value="">Select Jurisdiction</option>
+                        <option value="gdpr">GDPR (European Union/UK)</option>
+                        <option value="ccpa">CCPA/CPRA (California, USA)</option>
+                        <option value="hipaa">HIPAA (USA - Healthcare)</option>
+                        <option value="pii_general">General PII Breach (Other)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="data_type">Type of Data Involved</label>
+                    <select id="data_type" required>
+                        <option value="">Select Data Type</option>
+                        <option value="sensitive">Sensitive Data (Health, Biometric, Financial, Children's)</option>
+                        <option value="personal">Personal Identifiable Information (Names, Emails, Addresses)</option
+                        <option value="non_sensitive">Non-Sensitive Business Data</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="affected_users">Number of Affected Individuals</label>
+                    <input type="number" id="affected_users" min="1" placeholder="e.g. 1000" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="revenue">Annual Global Revenue (USD)</label>
+                    <input type="number" id="revenue" min="0" placeholder="Required for GDPR penalty calculation" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="breach_type">Nature of Incident</label>
+                    <select id="breach_type" required>
+                        <option value="">Select Incident Type</option>
+                        <option value="intentional">Intentional Violation / Profit-Driven</option>
+                        <option value="negligent">Negligent / Lack of Security Measures</option>
+                        <option value="accidental">Accidental / Human Error (Reported)</option>
+                        <option value="unknown">Unknown / Under Investigation</option>
+                    </select>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="cooperation" onchange="toggleCooperation">
+                    <label for="cooperation">Did you cooperate with authorities and notify affected parties immediately?</label>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="previous_violations">
+                    <label for="previous_violations">Has your organization had previous violations?</label>
+                </div>
+
+                <button type="submit" class="calculate-btn">Calculate Risk Estimate</button>
+            </form>
+
+            <div id="result">
+                <h2 class="result-title" id="result-title"></h2>
+                <div class="result-details">
+                    <div class="result-item">
+                        <span>Estimated Fine Range:</span>
+                        <strong id="fine-range"></strong>
+                    </div>
+                    <div class="result-item">
+                        <span>Primary Risk Factors:</span>
+                        <strong id="risk-factors"></strong>
+                    </div>
+                    <div class="result-item">
+                        <span>Legal Exposure Level:</span>
+                        <strong id="exposure-level"></strong>
+                    </div>
+                </div>
+                <p style="margin-bottom: 15px;">This is an automated estimate based on public penalty guidelines. Actual fines may vary significantly based on legal proceedings.</p>
+                
+                <div class="cta-box">
+                    <h3>Need a Formal Compliance Report?</
+                    <p>Get a detailed 20-page analysis of your specific situation, legal obligations, and a step-by-step remediation plan prepared by legal experts.</p>
+                    <button class="cta-btn" onclick="alert('This would lead to a payment form or email capture for a $49 report or lead generation for a law firm.')">Get Detailed Report ($49 Value)</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ad Placeholder 2 (Below result - High engagement zone) -->
+        <div class="ad-placeholder">
+            [Ad Space: Compliance Software / Legal Counsel - High Intent Zone]
+        </div>
+
+        <div class="disclaimer">
+            <strong>Disclaimer:</strong> This calculator provides estimates based on publicly available information regarding GDPR, CCPA, and HIPAA penalty structures. It does not constitute legal advice. Penalties are determined by regulatory bodies on a case-by-case basis. Consult with a qualified attorney for legal counsel.
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('fineCalculator').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const jurisdiction = document.getElementById('jurisdiction').value;
+            const dataType = document.getElementById('data_type').value;
+            const affectedUsers = parseInt(document.getElementById('affected_users').value);
+            const revenue = parseFloat(document.getElementById('revenue').value);
+            const breachType = document.getElementById('breach_type').value;
+            const cooperation = document.getElementById('cooperation').checked;
+            const previousViolations = document.getElementById('previous_violations').checked;
+
+            let minFine = 0;
+            let maxFine = 0;
+            let riskLevel = "";
+            let riskFactors = [];
+            let resultTitle = "";
+            let resultClass = "";
+
+            // Base multipliers
+            let severityMultiplier = 1;
+            if (dataType === 'sensitive') severityMultiplier = 3;
+            if (dataType === 'personal') severityMultiplier = 1.5;
+            
+            let intentMultiplier = 1;
+            if (breachType === 'intentional') intentMultiplier = 4;
+            if (breachType === 'negligent') intentMultiplier = 2;
+            if (breachType === 'accidental') intentMultiplier = 0.5;
+
+            if (cooperation) {
+                intentMultiplier *= 0.4; // Significant reduction for cooperation
+                riskFactors.push("Cooperation with authorities (mitigating factor)");
+            } else {
+                riskFactors.push("Lack of cooperation (aggravating factor)");
+                intentMultiplier *= 1.5;
+            }
+
+            if (previousViolations) {
+                intentMultiplier *= 2;
+                riskFactors.push("History of violations (aggravating factor)");
+            }
+
+            // Jurisdiction specific calculations
+            if (jurisdiction === 'gdpr') {
+                const revenuePercent = revenue * 0.04; // Up to 4% of global turnover
+                const fixedMax = 20000000; // €20 million max for severe cases
+                
+                if (dataType === 'sensitive' || breachType === 'intentional') {
+                    maxFine = Math.max(revenuePercent, fixedMax);
+                    minFine = maxFine * 0.02; // 2% of the max potential
+                    resultTitle = "CRITICAL: Severe GDPR Violation Risk";
+                    resultClass = "result-high";
+                    riskFactors.push("GDPR Tier 1 violation potential");
+                } else {
+                    maxFine = Math.max(revenue * 0.02, 10000000); // Up to 2% or €10m
+                    minFine = maxFine * 0.01;
+                    resultTitle = "HIGH: Significant GDPR Violation Risk";
+                    resultClass = "result-medium";
+                    riskFactors.push("GDPR Tier 2 violation potential");
+                }
+            } else if (jurisdiction === 'ccpa') {
+                // CCPA is typically $100-$750 per consumer for private rights of action
+                // Or up to $7500 per intentional violation by regulators
+                const perUserFine = breachType === 'intentional' ? 7500 : 2500;
+                const totalPotential = affectedUsers * perUserFine;
+                
+                minFine = affectedUsers * 100;
+                maxFine = totalPotential;
+                
+                if (maxFine > 5000000) {
+                    resultTitle = "CRITICAL: Catastrophic CCPA Liability";
+                    resultClass = "result-high";
+                } else {
+                    resultTitle = "HIGH: Significant CCPA Liability";
+                    resultClass = "result-medium";
+                }
+                riskFactors.push("Per-consumer statutory damages");
+            } else if (jurisdiction === 'hipaa') {
+                // HIPAA tiers: $100 to $50,000 per violation, up to $1.5 million per year
+                const perViolation = breachType === 'intentional' ? 50000 : 1000;
+                minFine = affectedUsers * 100;
+                maxFine = Math.min(affectedUsers * perViolation, 1500000);
+                
+                resultTitle = "HIGH: HIPAA Violation Detected";
+                resultClass = "result-high";
+                riskFactors.push("Federal criminal investigation potential");
+            } else {
+                // General estimate
+                minFine = affectedUsers * 50;
+                maxFine = affectedUsers * 500;
+                resultTitle = "MODEDIATE: Potential Liability Detected";
+                resultClass = "result-medium";
+            }
+
+            // Adjust for intent
+            minFine *= intentMultiplier;
+            maxFine *= intentMultiplier;
+
+            // Format currency
+            const formatCurrency = (num) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(num);
+
+            // Display results
+            document.getElementById('result-title').textContent = resultTitle;
+            document.getElementById('result-title').className = 'result-title ' + (resultClass === 'result-high' ? 'text-red-600' : 'text-yellow-600');
+            
+            document.getElementById('fine-range').textContent = `${formatCurrency(minFine)} - ${formatCurrency(maxFine)}`;
+            document.getElementById('risk-factors').textContent = riskFactors.join(", ") || "Standard risk assessment";
+            document.getElementById('exposure-level').textContent = resultClass === 'result-high' ? "SEVERE - Immediate Legal Counsel Required" : "SIGNIFICANT - Compliance Review Needed";
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = '';
+            resultDiv.classList.add(resultClass);
+            resultDiv.style.display = 'block';
+
+            // Scroll to result
+            resultDiv.scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>
